@@ -9,6 +9,7 @@ export class UsersController {
 
   @Post()
   async create(@Body() createClientDto: CreateClientDto, @Res() res: Response) {
+    this.usersService.create(createClientDto)
     return res.status(201).send()
   }
 }
