@@ -27,6 +27,79 @@
           }
         }
       }
+    },
+    "/services": {
+      "get": {
+        "summary": "Get all services",
+        "operationId": "index",
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new service",
+        "operationId": "create",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Service to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful creation of service"
+          }
+        }
+      }
+    },
+    "/services/{id}": {
+      "delete": {
+        "summary": "Delete a service",
+        "operationId": "delete",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of service to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion of service"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -45,7 +118,29 @@
           }
         },
         "required": ["name", "email", "password"]
+      },
+      "CreateServiceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "durationInMinutes": {
+            "type": "number"
+          }
+        },
+        "required": ["name", "value", "durationInMinutes"]
       }
-    }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }  
   }
 }
