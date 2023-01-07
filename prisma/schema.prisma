@@ -60,8 +60,8 @@ model Service {
 
 model AppointmentService {
   id            String @id @default(uuid())
-  appointmentId String @unique
-  serviceId     String @unique
+  appointmentId String
+  serviceId     String
 
   appointment Appointment @relation(fields: [appointmentId], references: [id])
   service     Service     @relation(fields: [serviceId], references: [id])
