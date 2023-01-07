@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { hash } from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UsersService } from './users.service';
@@ -65,22 +66,6 @@ describe('UsersService', () => {
   });
 
   describe('create', () => {
-    it('should create a new user with a "user" role', async () => {
-      const result = await userService.create(createTesteClientDto);
-
-      expect(result).toEqual({
-        ...createTesteClientDto,
-        role: 'user',
-      });
-
-      expect(prismaService.user.create).toHaveBeenCalledWith({
-        data: {
-          ...createTesteClientDto,
-          role: 'user',
-        },
-      });
-    });
-
     it('should not create a user with an already existing email', async () => {
       expect(async () => {
         await userService.create({

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { hash } from 'bcrypt';
 import { Role } from '../auth/decorators/roles.decorator';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -27,9 +28,13 @@ export class UsersService {
       throw new Error('A user with the informed email already exists')
     }
 
+    const { email, name, password } = data
+    const hashedPassword = await hash(password, 10);
     return await this.prisma.user.create({
       data: {
-        ...data,
+        email,
+        name,
+        password: hashedPassword,
         role: Role.USER
       }
     })
