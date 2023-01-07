@@ -100,6 +100,79 @@
           }
         }
       }
+    },
+    "/professionals": {
+      "get": {
+        "summary": "Get all professionals",
+        "operationId": "index",
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of professionals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Professional"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new professional",
+        "operationId": "create",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Professional to be created",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProfessionalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful creation of professional"
+          }
+        }
+      }
+    },
+    "/professionals/{id}": {
+      "delete": {
+        "summary": "Delete a professional",
+        "operationId": "delete",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of professional to delete",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion of professional"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -133,6 +206,33 @@
           }
         },
         "required": ["name", "value", "durationInMinutes"]
+      },
+      "CreateProfessionalDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "commission": {
+            "type": "number"
+          }
+        },
+        "required": ["name", "commission"]
+      },
+      "Professional": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "commission": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "name", "commission"]
       }
     },
     "securitySchemes": {
