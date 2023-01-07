@@ -35,7 +35,7 @@ model Professional {
 model Appointment {
   id             String    @id @default(uuid())
   clientId       String
-  attendeeId     String
+  attendeeId     String?
   professionalId String
   startTime      DateTime?
   endTime        DateTime?
