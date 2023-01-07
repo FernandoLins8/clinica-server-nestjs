@@ -133,6 +133,24 @@
           }
         },
         "required": ["name", "value", "durationInMinutes"]
+      },
+      "Service": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "durationInMinutes": {
+            "type": "number"
+          }
+        },
+        "required": ["id", "name", "description"]
       }
     },
     "securitySchemes": {
