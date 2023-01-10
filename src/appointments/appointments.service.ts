@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddProfessionalDto } from './dto/add-professional.dto';
-import { AddServiceDto } from './dto/add-service.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { StartAppointmentDto } from './dto/start-appointment.dto';
 
 @Injectable()
 export class AppointmentsService {
@@ -24,8 +21,7 @@ export class AppointmentsService {
     return appointment
   }
 
-  async addService(addServiceDto: AddServiceDto) {
-    const { appointmentId, serviceId } = addServiceDto
+  async addService(appointmentId: string, serviceId: string) {
     return await this.prisma.appointmentService.create({
       data: {
         appointmentId,
@@ -34,41 +30,29 @@ export class AppointmentsService {
     })
   }
 
-  async addProfessional(addProfessionalDto: AddProfessionalDto) {
-    const { appointmentId, professionalId } = addProfessionalDto
-    return await this.prisma.appointment.update({
-      data: {
-        professionalId
-      },
-      where: {
-        id: appointmentId
-      }
-    })
-  }
-
-  async startAppointment(startAppointmentDto: StartAppointmentDto, attendeeId: string) {
+  async startAppointment(appointmentId: string, attendeeId: string) {
     return this.prisma.appointment.update({
       data: {
         attendeeId,
         startTime: new Date()
       }, where: {
-        id: startAppointmentDto.appointmentId
+        id: appointmentId
       }
     })
   }
 
-  async finishAppointment(startAppointmentDto: StartAppointmentDto, attendeeId: string) {
+  async finishAppointment(appointmentId: string, attendeeId: string) {
     return await this.prisma.appointment.update({
       data: {
         attendeeId,
         endTime: new Date()
       }, where: {
-        id: startAppointmentDto.appointmentId
+        id: appointmentId
       }
     })
   }
 
-  async getAppointmentSummary(appointmentId: string, attendeeId: string) {
+  async getAppointmentSummary(appointmentId: string) {
     const appointment = await this.prisma.appointment.findUnique({
       where: {
         id: appointmentId
@@ -93,13 +77,13 @@ export class AppointmentsService {
       }
     })
 
-    let totalServicesDuration = 0
+    let expectedDurationInMinutes = 0
     let servicesCost = 0
 
     const parsedServices = appointment.appointmentService.map(appointment => {
       const { name, duration, value } = appointment.service
 
-      totalServicesDuration += duration
+      expectedDurationInMinutes += duration
       servicesCost += value
 
       return {
@@ -110,7 +94,7 @@ export class AppointmentsService {
     })
 
     const professionalCommission = servicesCost * appointment.professional.commission
-    const appointmentDuration = Number((((
+    const appointmentDurationInMinutes = Number((((
       appointment.endTime.getTime() - appointment.createdAt.getTime())
       / (60 * 10)) / 60).toFixed(2))
 
@@ -118,8 +102,8 @@ export class AppointmentsService {
       servicesCost,
       professionalCommission,
       totalCost: servicesCost + professionalCommission,
-      totalServicesDuration,
-      appointmentDuration, // 60 seconds per minute, 1000 milliseconds per second
+      expectedDurationInMinutes,
+      appointmentDurationInMinutes, // 60 seconds per minute, 1000 milliseconds per second
       services: {
         parsedServices
       }

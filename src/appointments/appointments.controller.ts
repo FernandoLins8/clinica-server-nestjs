@@ -1,11 +1,9 @@
-import { Body, Controller, Get, Post, Req, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Request, Res, UseGuards } from '@nestjs/common';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { AppointmentsService } from './appointments.service';
-import { AddProfessionalDto } from './dto/add-professional.dto';
-import { AddServiceDto } from './dto/add-service.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 
 @Controller('appointments')
@@ -23,32 +21,26 @@ export class AppointmentsController {
 
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('services')
-  async addService(@Body() addServiceDto: AddServiceDto) {
-    return this.appointmentService.addService(addServiceDto)
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('professional')
-  async addProfessional(@Body() addProfessionalDto: AddProfessionalDto) {
-    return this.appointmentService.addProfessional(addProfessionalDto)
+  @Post(':id/services')
+  async addService(@Param('id') id: string, @Body('serviceId') serviceId: string) {
+    return this.appointmentService.addService(id, serviceId)
   }
 
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('start')
-  async startAppointment(@Body() addProfessionalDto: AddProfessionalDto, @Request() req) {
+  @Post(':id/start')
+  async startAppointment(@Param('id') id: string, @Request() req) {
     const user = await this.usersService.findByEmail(req.user.email)
-    return this.appointmentService.startAppointment(addProfessionalDto, user.id)
+    return this.appointmentService.startAppointment(id, user.id)
   }
 
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('finish')
-  async finishAppointment(@Body() addProfessionalDto: AddProfessionalDto, @Request() req) {
+  @Post(':id/finish')
+  async finishAppointment(@Param('id') id: string, @Request() req) {
     const user = await this.usersService.findByEmail(req.user.email)
-    await this.appointmentService.finishAppointment(addProfessionalDto, user.id)
-    return await this.appointmentService.getAppointmentSummary(addProfessionalDto.appointmentId, user.id)
+    await this.appointmentService.finishAppointment(id, user.id)
+    return await this.appointmentService.getAppointmentSummary(id)
   }
 
   @Roles(Role.ADMIN)
