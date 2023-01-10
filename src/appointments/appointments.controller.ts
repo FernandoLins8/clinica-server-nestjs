@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req, Request, Res, UseGuards } from '@nestjs/common';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { OwnedAppointment } from 'src/auth/guards/ownedAppointment.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { AppointmentsService } from './appointments.service';
@@ -20,7 +21,7 @@ export class AppointmentsController {
   }
 
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, OwnedAppointment)
   @Post(':id/services')
   async addService(@Param('id') id: string, @Body('serviceId') serviceId: string) {
     return this.appointmentService.addService(id, serviceId)
