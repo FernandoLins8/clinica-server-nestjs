@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 
 @Injectable()
@@ -31,6 +31,14 @@ export class AppointmentsService {
   }
 
   async startAppointment(appointmentId: string, attendeeId: string) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId }
+    })
+
+    if (appointment.startTime != null) {
+      throw new Error('Appointment was already started')
+    }
+
     return this.prisma.appointment.update({
       data: {
         attendeeId,
@@ -42,6 +50,18 @@ export class AppointmentsService {
   }
 
   async finishAppointment(appointmentId: string, attendeeId: string) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: { id: appointmentId }
+    })
+
+    if (!appointment.startTime) {
+      throw new Error('Appointment did not start')
+    }
+
+    if (appointment.endTime) {
+      throw new Error('Appointment was already finished')
+    }
+
     return await this.prisma.appointment.update({
       data: {
         attendeeId,
@@ -104,9 +124,7 @@ export class AppointmentsService {
       totalCost: servicesCost + professionalCommission,
       expectedDurationInMinutes,
       appointmentDurationInMinutes, // 60 seconds per minute, 1000 milliseconds per second
-      services: {
-        parsedServices
-      }
+      services: parsedServices
     }
   }
 }
