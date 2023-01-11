@@ -7,12 +7,26 @@
   },
   "tags": [
     {
-      "name": "appointment"
+      "name": "user",
+      "description": "Operations related to users"
+    },
+    {
+      "name": "service",
+      "description": "Operations related to services"
+    },
+    {
+      "name": "professional",
+      "description": "Operations related to professionals"
+    },
+    {
+      "name": "appointment",
+      "description": "Operations related to appointments"
     }
   ],
   "paths": {
     "/users": {
       "post": {
+        "tags": ["user"],
         "summary": "Create a new user",
         "operationId": "create",
         "requestBody": {
@@ -35,6 +49,7 @@
     },
     "/services": {
       "get": {
+        "tags": ["service"],
         "summary": "Get all services",
         "operationId": "index",
         "responses": {
@@ -54,6 +69,7 @@
         }
       },
       "post": {
+        "tags": ["service"],
         "summary": "Create a new service",
         "operationId": "create",
         "security": [
@@ -81,6 +97,7 @@
     },
     "/services/{id}": {
       "delete": {
+        "tags": ["service"],
         "summary": "Delete a service",
         "operationId": "delete",
         "security": [
@@ -108,6 +125,7 @@
     },
     "/professionals": {
       "get": {
+        "tags": ["professional"],
         "summary": "Get all professionals",
         "operationId": "index",
         "responses": {
@@ -127,6 +145,7 @@
         }
       },
       "post": {
+        "tags": ["professional"],
         "summary": "Create a new professional",
         "operationId": "create",
         "security": [
@@ -154,6 +173,7 @@
     },
     "/professionals/{id}": {
       "delete": {
+        "tags": ["professional"],
         "summary": "Delete a professional",
         "operationId": "delete",
         "security": [
