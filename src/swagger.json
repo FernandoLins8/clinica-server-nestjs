@@ -5,6 +5,11 @@
     "description": "Clinica API",
     "version": "1.0.0"
   },
+  "tags": [
+    {
+      "name": "appointment"
+    }
+  ],
   "paths": {
     "/users": {
       "post": {
@@ -173,6 +178,174 @@
           }
         }
       }
+    },
+    "/appointments": {
+      "post": {
+        "tags": ["appointment"],
+        "summary": "Create a new appointment",
+        "operationId": "createAppointment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created an appointment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["appointment"],
+        "summary": "Get a list of all appointments",
+        "operationId": "getAppointments",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/{id}/services": {
+      "post": {
+        "tags": ["appointment"],
+        "summary": "Add service to the appointment",
+        "operationId": "addService",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the appointment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serviceId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully added service to the appointment"
+          }
+        }
+      }
+    },
+    "/appointments/{id}/start": {
+      "post": {
+          "tags": ["appointment"],
+          "summary": "Start an appointment",
+          "operationId": "startAppointment",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],  
+          "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "description": "Id of the appointment",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+              }
+          ],
+          "responses": {
+              "201": {
+                "description": "Successfully started the appointment"
+              }
+          }
+      }
+    },
+    "/appointments/{id}/finish": {
+      "post": {
+        "tags": ["appointment"],
+        "summary": "Finish an appointment",
+        "operationId": "finishAppointment",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of the appointment",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully finished the appointment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -244,6 +417,48 @@
           }
         },
         "required": ["name", "commission"]
+      },
+      "CreateAppointmentDto": {
+        "type": "object",
+        "properties": {
+          "professionalId": {
+            "type": "string"
+          }
+        }
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "attendeeId": {
+            "type": "string"
+          },
+          "professionalId": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "clientId", "professionalId"]
       }
     },
     "securitySchemes": {
