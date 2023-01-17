@@ -17,6 +17,20 @@ export class UsersService {
     })
   }
 
+  // Get basic user info (should not include password)
+  async getUserInfoByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        email
+      },
+      select: {
+        name: true,
+        role: true,
+        email: true,
+      }
+    })
+  }
+
   async create(data: CreateClientDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: {

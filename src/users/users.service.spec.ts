@@ -7,7 +7,8 @@ import { UsersService } from './users.service';
 const alreadyRegisteredEmail = 'test@test.com'
 const testUser = {
   name: 'Test User',
-  alreadyRegisteredEmail
+  email: alreadyRegisteredEmail,
+  role: 'user',
 }
 
 const createTesteClientDto: CreateClientDto = {
@@ -64,6 +65,30 @@ describe('UsersService', () => {
       expect(result).toBeUndefined();
     })
   });
+
+  describe('getUserInfo', () => {
+    it('should get basic user info (name, email, role)', async () => {
+      await userService.getUserInfoByEmail(alreadyRegisteredEmail)
+      expect(prismaService.user.findUnique)
+        .toHaveBeenCalledWith(expect.objectContaining({
+          select: expect.objectContaining({
+            name: true,
+            email: true,
+            role: true,
+          })
+        }))
+    })
+
+    it('should not return the user password', async () => {
+      await userService.getUserInfoByEmail(alreadyRegisteredEmail)
+      expect(prismaService.user.findUnique)
+        .toHaveBeenCalledWith(expect.objectContaining({
+          select: expect.not.objectContaining({
+            password: true
+          })
+        }))
+    })
+  })
 
   describe('create', () => {
     it('should not create a user with an already existing email', async () => {
