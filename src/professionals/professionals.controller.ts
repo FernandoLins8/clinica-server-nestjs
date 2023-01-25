@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { editFileName } from 'src/utils/file-uploading.utils';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { CreateProfessionalDto } from './dto/create-professional.dto';
 import { ProfessionalsService } from './professionals.service';
@@ -19,9 +22,27 @@ export class ProfessionalsController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
-  async create(@Body() createProfessionalDto: CreateProfessionalDto, @Res() res: Response) {
-    this.professionalsService.create(createProfessionalDto)
-    return res.status(201).send()
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './files/professionals',
+      filename: editFileName
+    })
+  }))
+  async create(@Body() createProfessionalDto: CreateProfessionalDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+      }),
+    ) file: Express.Multer.File) {
+    const completeImagePath = file ? `files/professionals/${file.filename}` : null
+    return this.professionalsService.create({
+      name: createProfessionalDto.name,
+      commission: Number(createProfessionalDto.commission)
+    }, completeImagePath)
   }
 
   @Roles(Role.ADMIN)
