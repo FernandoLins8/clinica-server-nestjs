@@ -80,6 +80,7 @@ describe('ServicesService', () => {
       expect(prismaService.service.create).toHaveBeenCalledWith({
         data: {
           name: createServiceTestData.name,
+          description: createServiceTestData.description,
           value: createServiceTestData.value,
           duration: createServiceTestData.durationInMinutes,
           imagePath: 'imageFilename'

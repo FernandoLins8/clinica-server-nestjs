@@ -23,10 +23,11 @@ export class ServicesService {
   }
 
   async create(data: CreateServiceDto, path: string | null) {
-    const { name, value, durationInMinutes: duration } = data
+    const { name, description, value, durationInMinutes: duration } = data
     return await this.prisma.service.create({
       data: {
         name,
+        description,
         value,
         duration,
         imagePath: path

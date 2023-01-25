@@ -41,6 +41,7 @@ export class ServicesController {
 
     return await this.servicesService.create({
       name: createServiceDto.name,
+      description: createServiceDto.description,
       durationInMinutes: Number(createServiceDto.durationInMinutes),
       value: Number(createServiceDto.value)
     }, completeImagePath)
