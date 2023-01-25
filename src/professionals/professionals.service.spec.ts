@@ -13,11 +13,13 @@ const testProfessionals = [
     id: '1',
     name: 'Test Service 1',
     commission: 100,
+    imageUrl: null
   },
   {
     id: '2',
     name: 'Test Service 2',
     commission: 200,
+    imageUrl: null
   },
 ];
 
@@ -67,7 +69,8 @@ describe('ServicesService', () => {
 
   describe('create', () => {
     it('should create a new professional', async () => {
-      const result = await service.create(createServiceTestData);
+      const imagePath = 'filename.png'
+      const result = await service.create(createServiceTestData, imagePath);
 
       expect(result).toEqual({
         ...createServiceTestData,
@@ -77,6 +80,7 @@ describe('ServicesService', () => {
         data: {
           name: createServiceTestData.name,
           commission: createServiceTestData.commission,
+          imagePath: imagePath
         },
       });
     });

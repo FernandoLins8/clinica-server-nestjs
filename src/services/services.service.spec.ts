@@ -14,12 +14,14 @@ const testServices = [
     id: '1',
     name: 'Test Service 1',
     value: 100,
+    imageUrl: null,
     durationInMinutes: 60,
   },
   {
     id: '2',
     name: 'Test Service 2',
     value: 200,
+    imageUrl: null,
     durationInMinutes: 120,
   },
 ];
@@ -70,8 +72,7 @@ describe('ServicesService', () => {
 
   describe('create', () => {
     it('should create a new service', async () => {
-      const result = await service.create(createServiceTestData);
-
+      const result = await service.create(createServiceTestData, 'imageFilename');
       expect(result).toEqual({
         ...createServiceTestData,
       });
@@ -81,6 +82,7 @@ describe('ServicesService', () => {
           name: createServiceTestData.name,
           value: createServiceTestData.value,
           duration: createServiceTestData.durationInMinutes,
+          imagePath: 'imageFilename'
         },
       });
     });

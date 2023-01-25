@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { diskStorage } from 'multer';
+import { editFileName } from 'src/utils/file-uploading.utils';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,9 +21,29 @@ export class ServicesController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
-  async create(@Body() createServiceDto: CreateServiceDto, @Res() res: Response) {
-    await this.servicesService.create(createServiceDto)
-    return res.status(201).send()
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './files/services',
+      filename: editFileName
+    })
+  }))
+  async create(@Body() createServiceDto: CreateServiceDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+      }),
+    ) file: Express.Multer.File) {
+    const completeImagePath = file ? `files/services/${file.filename}` : null
+
+    return await this.servicesService.create({
+      name: createServiceDto.name,
+      durationInMinutes: Number(createServiceDto.durationInMinutes),
+      value: Number(createServiceDto.value)
+    }, completeImagePath)
   }
 
   @Roles(Role.ADMIN)

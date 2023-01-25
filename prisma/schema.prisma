@@ -26,6 +26,7 @@ model Professional {
   id         String   @id @default(uuid())
   name       String
   commission Float
+  imagePath  String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt()
 
@@ -52,6 +53,7 @@ model Service {
   name      String
   value     Float
   duration  Int
+  imagePath String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
