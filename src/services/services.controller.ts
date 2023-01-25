@@ -2,7 +2,7 @@ import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
-import { editFileName } from 'src/utils/file-uploading.utils';
+import { editFileName } from '../utils/file-uploading.utils';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';

@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { editFileName } from 'src/utils/file-uploading.utils';
+import { editFileName } from '../utils/file-uploading.utils';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { CreateProfessionalDto } from './dto/create-professional.dto';
 import { ProfessionalsService } from './professionals.service';
