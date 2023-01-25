@@ -30,6 +30,7 @@ export class ServicesController {
   async create(@Body() createServiceDto: CreateServiceDto,
     @UploadedFile(
       new ParseFilePipe({
+        fileIsRequired: false,
         validators: [
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
           new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
