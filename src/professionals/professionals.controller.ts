@@ -41,6 +41,7 @@ export class ProfessionalsController {
     const completeImagePath = file ? `files/professionals/${file.filename}` : null
     return this.professionalsService.create({
       name: createProfessionalDto.name,
+      description: createProfessionalDto.description,
       commission: Number(createProfessionalDto.commission)
     }, completeImagePath)
   }
