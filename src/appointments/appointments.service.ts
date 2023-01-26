@@ -14,6 +14,16 @@ export class AppointmentsService {
     return this.prisma.appointment.findMany({
       where: {
         clientId: userId
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        professional: {
+          select: {
+            name: true
+          }
+        }
       }
     })
   }
