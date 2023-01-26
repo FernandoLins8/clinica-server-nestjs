@@ -41,4 +41,12 @@ export class AppointmentsController {
   async index() {
     return await this.appointmentService.findAll()
   }
+
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('client')
+  async getClientAppointments(@Req() req) {
+    const user = await this.usersService.findByEmail(req.user.email)
+    return this.appointmentService.findAllFromUser(user.id)
+  }
 }

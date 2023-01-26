@@ -10,6 +10,14 @@ export class AppointmentsService {
     return this.prisma.appointment.findMany()
   }
 
+  async findAllFromUser(userId: string) {
+    return this.prisma.appointment.findMany({
+      where: {
+        clientId: userId
+      }
+    })
+  }
+
   async create(data: CreateAppointmentDto, clientId: string) {
     const appointment = await this.prisma.appointment.create({
       data: {
