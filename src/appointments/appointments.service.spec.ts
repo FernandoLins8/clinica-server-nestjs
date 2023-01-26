@@ -120,6 +120,7 @@ describe('AppointmentsService', () => {
 
       const newAppointment = await appointmentService.create({
         professionalId: testProfessionalId,
+        servicesIds: ['fakeServiceId']
       }, testClientId)
 
       expect(testAppointments).toContain(newAppointment)
@@ -127,21 +128,6 @@ describe('AppointmentsService', () => {
         data: {
           clientId: testClientId,
           professionalId: testProfessionalId
-        }
-      })
-    })
-  })
-
-  describe('addService', () => {
-    it('should add a service to an appointment', async () => {
-      const testAppointmentId = "1"
-      const testServiceId = "service-id-1"
-
-      await appointmentService.addService(testAppointmentId, testServiceId)
-      expect(prismaService.appointmentService.create).toHaveBeenCalledWith({
-        data: {
-          appointmentId: testAppointmentId,
-          serviceId: testServiceId
         }
       })
     })

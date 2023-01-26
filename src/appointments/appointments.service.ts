@@ -18,6 +18,19 @@ export class AppointmentsService {
       }
     })
 
+    data.servicesIds.forEach(async (serviceId) => {
+      await this.prisma.appointmentService.create({
+        data: {
+          service: {
+            connect: { id: serviceId }
+          },
+          appointment: {
+            connect: { id: appointment.id }
+          }
+        }
+      });
+    });
+
     return appointment
   }
 
