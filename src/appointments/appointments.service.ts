@@ -7,7 +7,14 @@ export class AppointmentsService {
   constructor(private prisma: PrismaService) { }
 
   async findAll() {
-    return this.prisma.appointment.findMany()
+    return this.prisma.appointment.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        client: true
+      }
+    })
   }
 
   async findAllFromUser(userId: string) {
