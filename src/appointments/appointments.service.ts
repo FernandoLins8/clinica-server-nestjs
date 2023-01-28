@@ -30,18 +30,28 @@ export class AppointmentsService {
             commission: true,
           }
         },
-        appointmentService: {
+      }
+    })
+
+    const appointmentService = await this.prisma.appointmentService.findMany({
+      where: {
+        appointmentId: appointment.id
+      },
+      include: {
+        service: {
           select: {
-            service: {
-              select: {
-                id: true,
-                name: true,
-                value: true,
-                duration: true
-              }
-            }
-          },
+            name: true,
+            duration: true,
+            value: true,
+          }
         }
+      }
+    })
+    const services = appointmentService.map(appointmentService => {
+      return {
+        name: appointmentService.service.name,
+        duration: appointmentService.service.duration,
+        value: appointmentService.service.value,
       }
     })
 
@@ -49,6 +59,7 @@ export class AppointmentsService {
 
     return {
       ...appointment,
+      services,
       summary
     }
   }
