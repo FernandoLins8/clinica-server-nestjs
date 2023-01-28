@@ -17,6 +17,42 @@ export class AppointmentsService {
     })
   }
 
+  async getAppointment(id: string) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: {
+        id
+      },
+      include: {
+        professional: {
+          select: {
+            id: true,
+            name: true,
+            commission: true,
+          }
+        },
+        appointmentService: {
+          select: {
+            service: {
+              select: {
+                id: true,
+                name: true,
+                value: true,
+                duration: true
+              }
+            }
+          },
+        }
+      }
+    })
+
+    const summary = await this.getAppointmentSummary(appointment.id)
+
+    return {
+      ...appointment,
+      summary
+    }
+  }
+
   async findAllFromUser(userId: string) {
     return this.prisma.appointment.findMany({
       where: {
@@ -137,32 +173,28 @@ export class AppointmentsService {
 
     let expectedDurationInMinutes = 0
     let servicesCost = 0
-
-    const parsedServices = appointment.appointmentService.map(appointment => {
-      const { name, duration, value } = appointment.service
-
+    appointment.appointmentService.forEach(appointment => {
+      const { duration, value } = appointment.service
       expectedDurationInMinutes += duration
       servicesCost += value
-
-      return {
-        name: name,
-        duration: duration,
-        value: value,
-      }
     })
 
     const professionalCommission = servicesCost * appointment.professional.commission
-    const appointmentDurationInMinutes = Number((((
-      appointment.endTime.getTime() - appointment.createdAt.getTime())
-      / (60 * 10)) / 60).toFixed(2))
+
+    let appointmentDurationInMinutes = null
+    if (appointment.endTime) {
+      appointmentDurationInMinutes = Number((((
+        appointment.endTime.getTime() - appointment.createdAt.getTime())
+        / (60 * 10)) / 60).toFixed(2))
+      // 60 seconds per minute, 1000 milliseconds per second
+    }
 
     return {
       servicesCost,
       professionalCommission,
       totalCost: servicesCost + professionalCommission,
       expectedDurationInMinutes,
-      appointmentDurationInMinutes, // 60 seconds per minute, 1000 milliseconds per second
-      services: parsedServices
+      appointmentDurationInMinutes,
     }
   }
 }

@@ -283,10 +283,7 @@ describe('AppointmentsService', () => {
         professionalCommission: 12,
         totalCost: 132,
         expectedDurationInMinutes: 90,
-        appointmentDurationInMinutes: expect.any(Number),
-        services: appointment.appointmentService.map(appointment => ({
-          ...appointment.service
-        }))
+        appointmentDurationInMinutes: expect.any(Number)
       });
     });
   })
