@@ -182,12 +182,11 @@ export class AppointmentsService {
     const professionalCommission = servicesCost * appointment.professional.commission
 
     let appointmentDurationInMinutes = null
-    if (appointment.endTime) {
-      appointmentDurationInMinutes = Number((((
-        appointment.endTime.getTime() - appointment.createdAt.getTime())
-        / (60 * 10)) / 60).toFixed(2))
-      // 60 seconds per minute, 1000 milliseconds per second
-    }
+    const finishOrCurrentTime = appointment.endTime ? appointment.endTime : new Date()
+    appointmentDurationInMinutes = Number((((
+      finishOrCurrentTime.getTime() - appointment.createdAt.getTime())
+      / (60 * 10)) / 60).toFixed(2))
+    // 60 seconds per minute, 1000 milliseconds per second
 
     return {
       servicesCost,
