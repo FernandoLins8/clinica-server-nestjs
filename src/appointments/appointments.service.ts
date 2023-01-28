@@ -17,6 +17,42 @@ export class AppointmentsService {
     })
   }
 
+  async getAppointment(id: string) {
+    const appointment = await this.prisma.appointment.findUnique({
+      where: {
+        id
+      },
+      include: {
+        professional: {
+          select: {
+            id: true,
+            name: true,
+            commission: true,
+          }
+        },
+        appointmentService: {
+          select: {
+            service: {
+              select: {
+                id: true,
+                name: true,
+                value: true,
+                duration: true
+              }
+            }
+          },
+        }
+      }
+    })
+
+    const summary = await this.getAppointmentSummary(appointment.id)
+
+    return {
+      ...appointment,
+      summary
+    }
+  }
+
   async findAllFromUser(userId: string) {
     return this.prisma.appointment.findMany({
       where: {

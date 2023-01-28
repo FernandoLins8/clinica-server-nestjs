@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { OwnedAppointment } from 'src/auth/guards/ownedAppointment.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UsersService } from 'src/users/users.service';
 import { AppointmentsService } from './appointments.service';
@@ -48,5 +49,11 @@ export class AppointmentsController {
   async getClientAppointments(@Req() req) {
     const user = await this.usersService.findByEmail(req.user.email)
     return this.appointmentService.findAllFromUser(user.id)
+  }
+
+  @UseGuards(JwtAuthGuard, OwnedAppointment)
+  @Get(':id')
+  async getAppointment(@Param('id') id: string) {
+    return this.appointmentService.getAppointment(id)
   }
 }
