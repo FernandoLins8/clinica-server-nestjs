@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { Role, Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { OwnedAppointmentOrAdmin } from 'src/auth/guards/ownedAppointmentOrAdmin.guard';
@@ -34,6 +34,13 @@ export class AppointmentsController {
     const user = await this.usersService.findByEmail(req.user.email)
     await this.appointmentService.finishAppointment(id, user.id)
     return await this.appointmentService.getAppointmentSummary(id)
+  }
+
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete(':id')
+  async deleteAppointment(@Param('id') id: string) {
+    return this.appointmentService.deleteAppointment(id)
   }
 
   @Roles(Role.ADMIN)

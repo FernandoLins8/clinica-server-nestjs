@@ -206,4 +206,18 @@ export class AppointmentsService {
       appointmentDurationInMinutes,
     }
   }
+
+  async deleteAppointment(appointmentId: string) {
+    await this.prisma.appointmentService.deleteMany({
+      where: {
+        appointmentId
+      }
+    })
+
+    await this.prisma.appointment.delete({
+      where: {
+        id: appointmentId
+      }
+    })
+  }
 }
