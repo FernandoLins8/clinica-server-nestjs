@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
-export class OwnedAppointment implements CanActivate {
+export class OwnedAppointmentOrAdmin implements CanActivate {
   constructor(private prisma: PrismaService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -21,6 +21,10 @@ export class OwnedAppointment implements CanActivate {
 
       if (!appointment || !user) {
         throw new ForbiddenException("You are not authorized to access this appointment.");
+      }
+
+      if (user.role == 'admin') {
+        return true
       }
 
       return appointment.clientId === user.id;
