@@ -12,9 +12,26 @@ export class AppointmentsService {
         createdAt: 'desc'
       },
       include: {
-        client: true
+        client: {
+          select: {
+            id: true,
+            name: true,
+          }
+        },
+        professional: {
+          select: {
+            id: true,
+            name: true,
+          }
+        }
       }
     })
+  }
+
+  async findAllFromUser(userId: string) {
+    const appointments = await this.findAll()
+    const userAppointments = appointments.filter(appointment => appointment.clientId == userId)
+    return userAppointments
   }
 
   async getAppointment(id: string) {
@@ -62,24 +79,6 @@ export class AppointmentsService {
       services,
       summary
     }
-  }
-
-  async findAllFromUser(userId: string) {
-    return this.prisma.appointment.findMany({
-      where: {
-        clientId: userId
-      },
-      orderBy: {
-        createdAt: 'desc'
-      },
-      include: {
-        professional: {
-          select: {
-            name: true
-          }
-        }
-      }
-    })
   }
 
   async create(data: CreateAppointmentDto, clientId: string) {
